@@ -1,12 +1,46 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+// import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from 'react-router-dom';
+
+import GlobalStyles from './styles/GlobalStyles';
+
+import Account from './pages/Account';
+import Bookings from './pages/Bookings';
+import Cabins from './pages/Cabins';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import PageNotFound from './pages/PageNotFound';
+import Settings from './pages/Settings';
+import Users from './pages/Users';
+import AppLayout from './ui/AppLayout';
+
+const router = createBrowserRouter([
+  {
+    element: <AppLayout />,
+    errorElement: <PageNotFound />,
+    children: [
+      { index: true, element: <Navigate replace to='dashboard' /> },
+      { path: '/account', element: <Account /> },
+      { path: '/bookings', element: <Bookings /> },
+      { path: '/cabins', element: <Cabins /> },
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/settings', element: <Settings /> },
+      { path: '/users', element: <Users /> },
+    ],
+  },
+
+  { path: '/login', element: <Login /> },
+]);
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <GlobalStyles />
+      <RouterProvider router={router} />
+    </>
   );
 }
 
