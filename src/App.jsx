@@ -37,7 +37,13 @@ const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
 ]);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+    },
+  },
+});
 
 function App() {
   return (
