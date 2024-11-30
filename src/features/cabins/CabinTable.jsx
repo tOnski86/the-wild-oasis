@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCabins } from '../../services/apiCabins';
+import { getCabins } from '../../services/apiCabins-old';
 
 import CabinRow from './CabinRow';
 import styled from 'styled-components';
