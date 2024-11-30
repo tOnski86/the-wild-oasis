@@ -4,6 +4,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { createCabin } from '../../services/apiCabins';
+
 import Input from '../../ui/Input';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
@@ -11,8 +12,13 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 
-function CreateCabinForm() {
-  const { register, handleSubmit, reset, formState } = useForm();
+function CreateCabinForm({ editCabin = {} }) {
+  const { id: editId, ...editValues } = editCabin;
+  const isEditing = Boolean(editId);
+
+  const { register, handleSubmit, reset, formState } = useForm({
+    defaultValues: isEditing ? editValues : {},
+  });
   const { errors } = formState;
 
   const queryClient = useQueryClient();
@@ -30,12 +36,8 @@ function CreateCabinForm() {
     mutate({ ...data, image: data.image[0] });
   }
 
-  function onError(errors) {
-    console.log(errors);
-  }
-
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow label='Cabin Name' error={errors?.name?.message}>
         <Input
           disabled={isCreating}
@@ -114,7 +116,6 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow>
-        {/* type is an HTML attribute! */}
         <Button variation='secondary' type='reset'>
           Cancel
         </Button>

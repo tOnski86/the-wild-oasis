@@ -1,28 +1,28 @@
 import supabase, { supabaseUrl } from './supabase';
 import { v4 as uuidv4 } from 'uuid';
 
+// select
 export async function getCabins() {
-  const { data, error } = await supabase.from('cabins').select('*');
+  const { data, error: getError } = await supabase.from('cabins').select('*');
 
-  if (error) {
-    console.error(error);
-    throw new Error('Cabins could not be loaded');
-  }
+  if (getError) throw new Error('Cabins could not be loaded');
 
   return data;
 }
 
+// delete
 export async function deleteCabin(id) {
-  const { data, error } = await supabase.from('cabins').delete().eq('id', id);
+  const { data, error: deleteError } = await supabase
+    .from('cabins')
+    .delete()
+    .eq('id', id);
 
-  if (error) {
-    console.error(error);
-    throw new Error('Cabin could not be deleted');
-  }
+  if (deleteError) throw new Error('Cabin could not be deleted');
 
   return data;
 }
 
+// upload to storage
 async function uploadImage(image) {
   const imageName = `${uuidv4()}-${image.name}`.replaceAll('/', '');
   const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
@@ -31,13 +31,12 @@ async function uploadImage(image) {
     .from('cabin-images')
     .upload(imageName, image);
 
-  if (uploadError) {
-    throw new Error('Image upload failed');
-  }
+  if (uploadError) throw new Error('Image upload failed');
 
   return imagePath;
 }
 
+// create
 export async function createCabin(newCabin) {
   const { image, ...cabinData } = newCabin;
   const imagePath = await uploadImage(image);
