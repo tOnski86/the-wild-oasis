@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { formatCurrency } from '../../utils/helpers';
-import styled from 'styled-components';
-import { deleteCabin } from '../../services/apiCabins-old';
-import toast from 'react-hot-toast';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import styled from 'styled-components';
+
 import CreateCabinForm from './CreateCabinForm';
+import { deleteCabin } from '../../services/apiCabins-old';
+import { formatCurrency } from '../../utils/helpers';
 
 const TableRow = styled.div`
   display: grid;
@@ -59,7 +60,6 @@ function CabinRow({ cabin }) {
   } = cabin;
 
   const queryClient = useQueryClient();
-
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteCabin,
     onSuccess: () => {

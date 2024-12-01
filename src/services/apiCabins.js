@@ -36,7 +36,7 @@ async function uploadImage(image) {
   return imagePath;
 }
 
-// create
+// insert
 export async function createCabin(newCabin) {
   const { image, ...cabinData } = newCabin;
   const imagePath = await uploadImage(image);
@@ -47,15 +47,31 @@ export async function createCabin(newCabin) {
     .select()
     .single();
 
-  if (createError) {
-    console.error(createError);
-    throw new Error('Cabin could not be created');
-  }
+  if (createError) throw new Error('Cabin could not be created');
 
   return data;
 }
 
-// export async function updateCabin(updatedCabin) {
-//   console.log(typeof updatedCabin.image === 'string' ? 'string' : 'file');
-//   console.log(updatedCabin);
-// }
+// update
+export async function updateCabin(updatedCabin) {
+  const { id, image, ...cabinData } = updatedCabin;
+
+  let imagePath;
+
+  if (image?.startsWith?.(supabaseUrl)) {
+    imagePath = image;
+  } else {
+    imagePath = await uploadImage(image);
+  }
+
+  const { data, error: updateError } = await supabase
+    .from('cabins')
+    .update({ ...cabinData, image: imagePath })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (updateError) throw new Error('Cabin could not be updated');
+
+  return data;
+}
