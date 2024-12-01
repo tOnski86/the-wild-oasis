@@ -49,9 +49,9 @@ function CreateCabinForm({ editCabin = {} }) {
     onError: error => toast.error(error.message),
   });
 
-  // handler
+  // custom handler
   function onSubmit(data) {
-    // account for filelist or url
+    // check filelist or url
     const image = typeof data.image === 'string' ? data.image : data.image[0];
 
     isEditingSession
