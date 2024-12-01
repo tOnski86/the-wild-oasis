@@ -1,13 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
-import {
-  createCabin as createCabinApi,
-  updateCabin as updateCabinApi,
-} from '../../services/apiCabins';
-
+import { useUpdateCabin } from './useUpdateCabin';
+import { useCreateCabin } from './useCreateCabin';
 import Input from '../../ui/Input';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
@@ -16,38 +11,17 @@ import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 
 function CreateCabinForm({ editCabin = {} }) {
+  const { createCabin, isCreating } = useCreateCabin();
+  const { updateCabin, isEditing } = useUpdateCabin();
+
   // form
   const { id: editId, ...editValues } = editCabin;
   const isEditingSession = Boolean(editId);
 
-  const { register, handleSubmit, reset, formState } = useForm({
+  const { register, handleSubmit, formState, reset } = useForm({
     defaultValues: isEditingSession ? editValues : {},
   });
   const { errors } = formState;
-
-  const queryClient = useQueryClient();
-
-  // mutation: create cabin
-  const { mutate: createCabin, isPending: isCreating } = useMutation({
-    mutationFn: createCabinApi,
-    onSuccess: () => {
-      toast.success('New cabin created');
-      queryClient.invalidateQueries(['cabins']);
-      reset();
-    },
-    onError: error => toast.error(error.message),
-  });
-
-  // mutation: update cabin
-  const { mutate: updateCabin, isPending: isEditing } = useMutation({
-    mutationFn: updateCabinApi,
-    onSuccess: () => {
-      toast.success('New cabin updated');
-      queryClient.invalidateQueries(['cabins']);
-      reset();
-    },
-    onError: error => toast.error(error.message),
-  });
 
   // custom handler
   function onSubmit(data) {
@@ -55,8 +29,18 @@ function CreateCabinForm({ editCabin = {} }) {
     const image = typeof data.image === 'string' ? data.image : data.image[0];
 
     isEditingSession
-      ? updateCabin({ ...data, image, id: editId })
-      : createCabin({ ...data, image });
+      ? updateCabin(
+          { ...data, image, id: editId },
+          {
+            onSuccess: () => reset(),
+          }
+        )
+      : createCabin(
+          { ...data, image },
+          {
+            onSuccess: () => reset(),
+          }
+        );
   }
 
   return (
