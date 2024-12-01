@@ -39,7 +39,14 @@ async function uploadImage(image) {
 // insert
 export async function createCabin(newCabin) {
   const { image, ...cabinData } = newCabin;
-  const imagePath = await uploadImage(image);
+
+  let imagePath;
+
+  if (image?.startsWith?.(supabaseUrl)) {
+    imagePath = image;
+  } else {
+    imagePath = await uploadImage(image);
+  }
 
   const { data, error: createError } = await supabase
     .from('cabins')
