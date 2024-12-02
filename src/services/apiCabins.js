@@ -12,6 +12,10 @@ export async function getCabins() {
 
 // delete
 export async function deleteCabin(id) {
+  const { error: imageError } = await deleteImage(id);
+
+  if (imageError) throw new Error('Cannot find or delete image');
+
   const { data, error: deleteError } = await supabase
     .from('cabins')
     .delete()
@@ -20,20 +24,6 @@ export async function deleteCabin(id) {
   if (deleteError) throw new Error('Cabin could not be deleted');
 
   return data;
-}
-
-// upload to storage
-async function uploadImage(image) {
-  const imageName = `${uuidv4()}-${image.name}`.replaceAll('/', '');
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from('cabin-images')
-    .upload(imageName, image);
-
-  if (uploadError) throw new Error('Image upload failed');
-
-  return imagePath;
 }
 
 // insert
@@ -79,6 +69,40 @@ export async function updateCabin(updatedCabin) {
     .single();
 
   if (updateError) throw new Error('Cabin could not be updated');
+
+  return data;
+}
+
+// upload to storage
+async function uploadImage(image) {
+  const imageName = `${uuidv4()}-${image.name}`.replaceAll('/', '');
+  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('cabin-images')
+    .upload(imageName, image);
+
+  if (uploadError) throw new Error('Image upload failed');
+
+  return imagePath;
+}
+
+// delete from storage
+async function deleteImage(id) {
+  const { data: imageData, error: imageError } = await supabase
+    .from('cabins')
+    .select('image')
+    .eq('id', id);
+
+  if (imageError) throw new Error('Image could not be found');
+
+  const filename = imageData[0].image.split('/').slice(-1);
+
+  const { data, error: imageDeleteError } = await supabase.storage
+    .from('cabin-images')
+    .remove(filename);
+
+  if (imageDeleteError) throw new Error('Image could not be deleted');
 
   return data;
 }
