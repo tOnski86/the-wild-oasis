@@ -11,5 +11,5 @@ export function useGetSettings() {
     queryFn: getSettingsApi,
   });
 
-  return { isGetting, error, getSettings };
+  return { isGetting, getSettings };
 }

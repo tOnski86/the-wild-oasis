@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner';
 
 function UpdateSettingsForm() {
   const { isGetting, getSettings } = useGetSettings();
-  const { isUpdating, updateSetting } = useUpdateSetting();
+  const { updateSetting } = useUpdateSetting();
 
   if (isGetting) return <Spinner />;
 
