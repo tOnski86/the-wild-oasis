@@ -10,7 +10,7 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 
-function CreateCabinForm({ editCabin = {} }) {
+function CreateCabinForm({ editCabin = {}, onCloseModal }) {
   const { createCabin, isCreating } = useCreateCabin();
   const { updateCabin, isEditing } = useUpdateCabin();
 
@@ -32,13 +32,19 @@ function CreateCabinForm({ editCabin = {} }) {
       ? updateCabin(
           { ...data, image, id: editId },
           {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+              reset();
+              onCloseModal?.();
+            },
           }
         )
       : createCabin(
           { ...data, image },
           {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+              reset();
+              onCloseModal?.();
+            },
           }
         );
   }
@@ -123,7 +129,11 @@ function CreateCabinForm({ editCabin = {} }) {
       </FormRow>
 
       <FormRow>
-        <Button variation='secondary' type='reset'>
+        <Button
+          variation='secondary'
+          type='reset'
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isCreating || isEditing}>
