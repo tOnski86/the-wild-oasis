@@ -10,6 +10,4 @@ export function useOutsideClick(handler, ref) {
 
     return () => document.removeEventListener('click', handleClick, true);
   }, [handler, ref]);
-
-  return ref;
 }

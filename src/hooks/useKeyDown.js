@@ -11,6 +11,4 @@ export function useKeyDown(handler, ref) {
     document.addEventListener('keydown', handleKeyDown, true);
     return () => document.addEventListener('keydown', handleKeyDown, true);
   }, [handler, ref]);
-
-  return ref;
 }
